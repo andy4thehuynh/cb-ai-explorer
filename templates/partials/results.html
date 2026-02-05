@@ -1,0 +1,71 @@
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+  <div id="before-panel">
+    <h3 class="font-semibold text-lg mb-2">Before (raw data)</h3>
+    <pre class="bg-base-200 p-3 rounded text-xs overflow-x-auto mb-3">
+      <code>{{ before_query }}</code>
+    </pre>
+
+    <div class="overflow-x-auto">
+
+      {% if before_results|length > 0 %}
+      <table class="table table-zebra table-sm w-full">
+        <thead>
+          <tr>
+            {% for key in before_results[0].keys() %}
+              <th>{{ key }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in before_results %}
+          <tr>
+            {% for val in row.values() %}
+              <td>{{ val }}</td>
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      {% else %}
+        <p class="text-base-content/50">No results returned.</p>
+      {% endif %}
+
+    </div>
+  </div>
+
+  <div id="after-panel">
+    <h3 class="font-semibold text-lg mb-2">After (AI-enriched)</h3>
+    <pre class="bg-base-200 p-3 rounded text-xs overflow-x-auto mb-3">
+      <code>{{ after_query }}</code>
+    </pre>
+
+    <div class="overflow-x-auto">
+
+      {% if after_results|length > 0 %}
+      <table class="table table-zebra table-sm w-full">
+        <thead>
+          <tr>
+            {% for key in after_results[0].keys() %}
+              <th{% if key in ai_fields %} class="text-primary font-bold"{% endif %}>{{ key }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in after_results %}
+          <tr>
+            {% for key, val in row.items() %}
+              <td{% if key in ai_fields %} class="text-primary"{% endif %}>{{ val }}</td>
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      {% else %}
+        <p class="text-base-content/50">No results returned.</p>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
