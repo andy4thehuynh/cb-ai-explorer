@@ -1,13 +1,3 @@
-"""
-Task 1.6: Infrastructure tests — verify the stack works before any feature code.
-
-Tests:
-  (a) FastAPI app instance is created without error
-  (b) GET /health returns 200 with {"status": "ok"}
-  (c) Jinja2 templates/ directory is configured correctly
-  (d) A minimal template renders via the test client
-"""
-
 import os
 
 
@@ -30,7 +20,7 @@ def test_jinja2_templates_directory():
     templates_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "templates")
     assert os.path.isdir(templates_dir), "templates/ directory must exist"
 
-    from main import templates
+    from app.routes import templates
     assert templates is not None
 
 
