@@ -1,0 +1,22 @@
+[
+  {
+    "id": "sentiment-hotels",
+    "name": "Hotel Review Sentiment",
+    "description": "Analyze the sentiment of hotel reviews in San Francisco using AI to classify each review as positive, negative, or neutral.",
+    "category": "sentiment",
+    "before_query": "SELECT h.name AS hotel_name,\n       r.author,\n       r.content AS review_text\nFROM `travel-sample`.inventory.hotel AS h\nUNNEST h.reviews AS r\nWHERE h.city = \"San Francisco\"\nLIMIT 5",
+    "after_query": "SELECT h.name AS hotel_name,\n       r.author,\n       r.content AS review_text,\n       default:ai_sentiment({\"text\": r.content, \"temperature\": 0.3, \"max_tokens\": 500}) AS sentiment\nFROM `travel-sample`.inventory.hotel AS h\nUNNEST h.reviews AS r\nWHERE h.city = \"San Francisco\"\nLIMIT 5",
+    "ai_fields": ["sentiment"],
+    "display_hint": "table"
+  },
+  {
+    "id": "summary-hotels",
+    "name": "Hotel Description Summary",
+    "description": "Condense verbose hotel descriptions into concise summaries, making it easy to scan and compare properties at a glance.",
+    "category": "summary",
+    "before_query": "SELECT name,\n       description AS full_description\nFROM `travel-sample`.inventory.hotel\nWHERE description IS NOT NULL\nLIMIT 3",
+    "after_query": "SELECT name,\n       description AS full_description,\n       default:ai_summary({\"text\": description, \"max_words\": 30, \"temperature\": 0.4}) AS summary\nFROM `travel-sample`.inventory.hotel\nWHERE description IS NOT NULL\nLIMIT 3",
+    "ai_fields": ["summary"],
+    "display_hint": "cards"
+  }
+]

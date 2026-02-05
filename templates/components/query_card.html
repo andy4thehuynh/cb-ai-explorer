@@ -1,0 +1,9 @@
+<div class="card bg-base-100 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
+  hx-get="/query/{{ query.id }}"
+  hx-target="#query-detail"
+  hx-swap="innerHTML">
+  <div class="card-body p-4">
+    <h3 class="card-title text-sm">{{ query.name }}</h3>
+    <p class="text-xs text-base-content/60">{{ query.description }}</p>
+  </div>
+</div>
