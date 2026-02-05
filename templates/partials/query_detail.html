@@ -15,10 +15,12 @@
     </div>
 
     <div class="card-actions justify-end mt-4">
+      <span id="run-spinner" class="loading loading-spinner loading-md htmx-indicator"></span>
       <button class="btn btn-primary"
         hx-post="/query/{{ query.id }}/run"
         hx-target="#results-area"
-        hx-swap="innerHTML">
+        hx-swap="innerHTML"
+        hx-indicator="#run-spinner">
         Run Query
       </button>
     </div>

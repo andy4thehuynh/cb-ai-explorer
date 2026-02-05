@@ -38,3 +38,11 @@ class TestQueryDetail:
     def test_returns_404_for_invalid_id(self, client):
         response = client.get("/query/nonexistent-query")
         assert response.status_code == 404
+
+
+class TestLoadingIndicator:
+    def test_run_button_has_hx_indicator(self, client):
+        """Run Query button includes hx-indicator attribute."""
+        response = client.get("/query/sentiment-hotels")
+        html = response.text
+        assert "hx-indicator" in html
