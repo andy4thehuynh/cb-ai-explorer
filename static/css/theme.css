@@ -1,0 +1,46 @@
+[data-theme="cbshell"] {
+  color-scheme: dark;
+
+  /* ── Brand colors ─────────── */
+  --p:   63.7% 0.162 17.5;   /* primary:         coral/red  #E8676B  — selected items, AI highlights */
+  --pf:  57.6% 0.150 18.0;   /* primary-focus:   dark coral #D4585C  — hover/active states           */
+  --pc:  100%  0     0;       /* primary-content: white      #FFFFFF  — text on primary bg            */
+
+  --s:   68.0% 0.158 277;    /* secondary:         muted purple — inherited from night theme  */
+  --sc:  13.6% 0.032 277;    /* secondary-content: dark text on secondary                     */
+
+  --a:   77.3% 0.112 178;    /* accent:         teal   #4ECDC4  — links, secondary highlights */
+  --af:  70.0% 0.100 178;    /* accent-focus:   darker teal     — hover/active states         */
+  --ac:  15.0% 0.022 178;    /* accent-content: dark text on accent bg                        */
+
+  --n:   24.5% 0.014 264;    /* neutral:         dark gray   #2A2D35                          */
+  --nf:  20.0% 0.012 264;    /* neutral-focus:   darker gray                                  */
+  --nc:  90.6% 0     0;      /* neutral-content: light text  #E0E0E0                          */
+
+  /* ── Base surfaces ────────────────────────────────────── */
+  --b1:  19.4% 0.014 264;    /* base-100: card background       #1A1D23 */
+  --b2:  16.6% 0.010 264;    /* base-200: page background       #141619 */
+  --b3:  13.2% 0.010 264;    /* base-300: code block background #0D0F12 */
+  --bc:  90.6% 0     0;      /* base-content: default text      #E0E0E0 */
+
+  /* ── Status colors (functional — adjust less often) ──── */
+  --in:  68.5% 0.148 237;    /* info    — blue   */
+  --inc: 0%    0     0;      /* info-content     */
+  --su:  78.5% 0.133 182;    /* success — green  */
+  --suc: 15.7% 0.027 182;    /* success-content  */
+  --wa:  83.2% 0.140 83;     /* warning — amber  */
+  --wac: 16.6% 0.028 83;     /* warning-content  */
+  --er:  71.8% 0.170 13;     /* error   — red    */
+  --erc: 14.4% 0.034 13;     /* error-content    */
+
+  /* ── Shape & motion ───────── */
+  --rounded-box:    1rem;
+  --rounded-btn:    0.5rem;
+  --rounded-badge:  1.9rem;
+  --animation-btn:  0.25s;
+  --animation-input: 0.2s;
+  --btn-focus-scale: 0.95;
+  --border-btn:     1px;
+  --tab-border:     1px;
+  --tab-radius:     0.5rem;
+}

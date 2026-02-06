@@ -2,6 +2,7 @@ import logging
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 
 from app.routes import router
 
@@ -39,4 +40,5 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="CB AI Explorer", lifespan=lifespan)
+app.mount("/static", StaticFiles(directory="static"), name="static")
 app.include_router(router)
