@@ -1,14 +1,27 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="night">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CB AI Explorer</title>
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@4/dist/full.min.css" rel="stylesheet" type="text/css" />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CB AI Explorer</title>
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@4/dist/full.min.css" rel="stylesheet" type="text/css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+  <style>
+    pre code { white-space: pre-wrap; word-break: break-word; }
+  </style>
 </head>
 <body class="min-h-screen bg-base-200">
-    {% block content %}{% endblock %}
+  <div class="navbar bg-base-100 shadow-lg">
+    <div class="navbar-start">
+      <a class="btn btn-ghost text-xl font-bold" href="/">
+        <span class="text-primary">CB</span> AI Explorer
+      </a>
+    </div>
+    <div class="navbar-end pr-4">
+      <span class="text-xs text-base-content/40">Couchbase AI Functions Demo</span>
+    </div>
+  </div>
+  {% block content %}{% endblock %}
 </body>
 </html>
