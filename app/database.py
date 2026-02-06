@@ -62,3 +62,24 @@ def execute_query(cluster: Cluster, statement: str, timeout: int = 30) -> list[d
     raise RuntimeError(
       f"Query execution failed: {type(exc).__name__}: {_exc_detail(exc)}"
     ) from exc
+
+
+def _parse_ai_response(value):
+  """Extract clean string from AI Function response format [{"response": "..."}]."""
+  if isinstance(value, list) and len(value) > 0 and isinstance(value[0], dict) and "response" in value[0]:
+    return value[0]["response"]
+  return value
+
+
+def parse_ai_fields_in_results(results, ai_fields):
+  """Parse AI Function responses in result rows for specified fields."""
+  parsed = []
+  for row in results:
+    parsed_row = {}
+    for key, value in row.items():
+      if key in ai_fields:
+        parsed_row[key] = _parse_ai_response(value)
+      else:
+        parsed_row[key] = value
+    parsed.append(parsed_row)
+  return parsed

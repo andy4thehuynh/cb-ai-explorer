@@ -1,0 +1,25 @@
+<div>
+  <pre class="bg-base-300/50 p-3 rounded-lg text-xs overflow-x-auto mb-4 border border-base-300">
+    <code>{{ query_text }}</code>
+  </pre>
+
+  {% if results|length > 0 %}
+    <div class="space-y-3">
+      {% for row in results %}
+      <div class="card bg-base-100 shadow-sm border border-base-300">
+        <div class="card-body p-4 gap-1">
+          {% for key, val in row.items() %}
+          <div>
+            <span class="font-semibold text-xs uppercase tracking-wide text-base-content/50{% if key in highlight_fields %} ai-enriched !text-primary{% endif %}">{{ key }}</span>
+            <p class="text-sm mt-0.5{% if key in highlight_fields %} ai-enriched text-primary{% endif %}">{{ val }}</p>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+
+  {% else %}
+    <p class="text-base-content/50 text-center py-4">No results returned.</p>
+  {% endif %}
+</div>

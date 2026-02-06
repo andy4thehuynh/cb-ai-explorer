@@ -1,0 +1,29 @@
+<div class="overflow-x-auto">
+  <pre class="bg-base-300/50 p-3 rounded-lg text-xs overflow-x-auto mb-4 border border-base-300">
+    <code>{{ query_text }}</code>
+  </pre>
+
+  {% if results|length > 0 %}
+  <table class="table table-zebra table-sm w-full">
+    <thead>
+      <tr>
+        {% for key in results[0].keys() %}
+          <th{% if key in highlight_fields %} class="ai-enriched text-primary font-bold"{% endif %}>{{ key }}</th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in results %}
+      <tr>
+        {% for key, val in row.items() %}
+          <td{% if key in highlight_fields %} class="ai-enriched text-primary"{% endif %}>{{ val }}</td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  {% else %}
+    <p class="text-base-content/50 text-center py-4">No results returned.</p>
+  {% endif %}
+</div>
