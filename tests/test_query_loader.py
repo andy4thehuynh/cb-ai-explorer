@@ -1,5 +1,4 @@
 import json
-import os
 
 import pytest
 
@@ -8,6 +7,12 @@ from app.query_loader import (
   get_query_by_id,
   load_queries,
 )
+
+EXPECTED_CATEGORIES = {
+  "sentiment", "summary", "classification", "extraction",
+  "grammar", "generation", "masking", "similarity",
+  "translation", "completion",
+}
 
 SAMPLE_QUERIES = [
   {
@@ -104,6 +109,45 @@ class TestGetQueriesByCategory:
 
     sentiment_ids = {q["id"] for q in grouped["sentiment"]}
     assert sentiment_ids == {"sentiment-hotels", "sentiment-airlines"}
+
+
+class TestFullQueryCatalog:
+  def test_contains_exactly_12_entries(self):
+    queries = load_queries()
+    assert len(queries) == 12
+
+  def test_all_10_ai_function_categories_represented(self):
+    queries = load_queries()
+    categories = {q["category"] for q in queries}
+    assert categories == EXPECTED_CATEGORIES
+
+  def test_all_required_fields_present(self):
+    required_fields = {
+      "id", "name", "description", "category",
+      "before_query", "after_query", "ai_fields", "display_hint",
+    }
+    queries = load_queries()
+    for query in queries:
+      missing = required_fields - query.keys()
+      assert not missing, f"Query {query.get('id', '?')} missing: {missing}"
+
+  def test_no_duplicate_ids(self):
+    queries = load_queries()
+    ids = [q["id"] for q in queries]
+    assert len(ids) == len(set(ids)), f"Duplicate ids: {[i for i in ids if ids.count(i) > 1]}"
+
+  def test_each_query_has_nonempty_ai_fields(self):
+    queries = load_queries()
+    for query in queries:
+      assert len(query["ai_fields"]) > 0, f"Query {query['id']} has empty ai_fields"
+
+  def test_display_hint_is_valid(self):
+    queries = load_queries()
+    valid_hints = {"table", "cards"}
+    for query in queries:
+      assert query["display_hint"] in valid_hints, (
+        f"Query {query['id']} has invalid display_hint: {query['display_hint']}"
+      )
 
 
 class TestGetQueryById:
