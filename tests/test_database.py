@@ -3,6 +3,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+from app.database import parse_ai_fields_in_results
+
 
 def _make_settings(**overrides):
   """Create a mock settings object."""
@@ -148,3 +150,46 @@ class TestExecuteQuery:
 
     with pytest.raises(RuntimeError, match="Query execution failed"):
       execute_query(mock_cluster, "INVALID SQL++")
+
+
+class TestParseAiFieldsInResults:
+  """Tests for AI Function response parsing."""
+
+  def test_extracts_response_from_ai_format(self):
+    """Parses [{"response": "..."}] into clean strings for AI fields."""
+
+    results = [
+      {"name": "Hotel A", "sentiment": [{"response": "positive"}]},
+      {"name": "Hotel B", "sentiment": [{"response": "neutral"}]},
+    ]
+    parsed = parse_ai_fields_in_results(results, ["sentiment"])
+    assert parsed[0]["sentiment"] == "positive"
+    assert parsed[1]["sentiment"] == "neutral"
+
+  def test_leaves_non_ai_fields_unchanged(self):
+    """Non-AI fields are passed through untouched."""
+
+    results = [{"name": "Hotel A", "sentiment": [{"response": "positive"}]}]
+    parsed = parse_ai_fields_in_results(results, ["sentiment"])
+    assert parsed[0]["name"] == "Hotel A"
+
+  def test_handles_already_parsed_values(self):
+    """Plain string values in AI fields are returned as-is."""
+
+    results = [{"name": "Hotel A", "sentiment": "positive"}]
+    parsed = parse_ai_fields_in_results(results, ["sentiment"])
+    assert parsed[0]["sentiment"] == "positive"
+
+  def test_handles_empty_list_gracefully(self):
+    """Empty list AI response falls back to raw value."""
+
+    results = [{"name": "Hotel A", "sentiment": []}]
+    parsed = parse_ai_fields_in_results(results, ["sentiment"])
+    assert parsed[0]["sentiment"] == []
+
+  def test_handles_malformed_response_gracefully(self):
+    """Malformed AI response (no 'response' key) falls back to raw value."""
+
+    results = [{"name": "Hotel A", "sentiment": [{"error": "timeout"}]}]
+    parsed = parse_ai_fields_in_results(results, ["sentiment"])
+    assert parsed[0]["sentiment"] == [{"error": "timeout"}]

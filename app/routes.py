@@ -3,7 +3,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from pathlib import Path
 
-from app.database import execute_query
+from app.database import execute_query, parse_ai_fields_in_results
 from app.query_loader import load_queries, get_queries_by_category, get_query_by_id
 
 templates = Jinja2Templates(directory=Path(__file__).resolve().parent.parent / "templates")
@@ -46,6 +46,8 @@ def query_run(request: Request, query_id: str):
     return templates.TemplateResponse(
       request, "partials/error.html", {"error_message": str(exc)}
     )
+
+  after_results = parse_ai_fields_in_results(after_results, query["ai_fields"])
 
   return templates.TemplateResponse(
     request,
