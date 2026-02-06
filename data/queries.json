@@ -18,5 +18,105 @@
     "after_query": "SELECT name,\n       description AS full_description,\n       default:ai_summary({\"text\": description, \"max_words\": 30, \"temperature\": 0.4}) AS summary\nFROM `travel-sample`.inventory.hotel\nWHERE description IS NOT NULL\nLIMIT 3",
     "ai_fields": ["summary"],
     "display_hint": "cards"
+  },
+  {
+    "id": "classification-airlines",
+    "name": "Airline Type Classification",
+    "description": "Classify airlines as commercial, charter, cargo, or regional based on their name and metadata using AI.",
+    "category": "classification",
+    "before_query": "SELECT name,\n       callsign,\n       country\nFROM `travel-sample`.inventory.airline\nLIMIT 10",
+    "after_query": "SELECT name,\n       callsign,\n       country,\n       default:ai_classification({\"text\": name, \"labels\": [\"commercial\", \"charter\", \"cargo\", \"regional\"], \"temperature\": 0.2}) AS airline_type\nFROM `travel-sample`.inventory.airline\nLIMIT 10",
+    "ai_fields": ["airline_type"],
+    "display_hint": "table"
+  },
+  {
+    "id": "extraction-landmarks",
+    "name": "Landmark Entity Extraction",
+    "description": "Extract people, organizations, locations, and dates mentioned in landmark descriptions using AI.",
+    "category": "extraction",
+    "before_query": "SELECT name,\n       content AS description\nFROM `travel-sample`.inventory.landmark\nWHERE content IS NOT NULL\nLIMIT 3",
+    "after_query": "SELECT name,\n       content AS description,\n       default:ai_extraction({\"text\": content, \"labels\": [\"person\", \"organization\", \"location\", \"date\"], \"temperature\": 0.2, \"max_tokens\": 1000}) AS entities\nFROM `travel-sample`.inventory.landmark\nWHERE content IS NOT NULL\nLIMIT 3",
+    "ai_fields": ["entities"],
+    "display_hint": "cards"
+  },
+  {
+    "id": "grammar-reviews",
+    "name": "Review Grammar Correction",
+    "description": "Clean up hotel reviews by correcting grammar, spelling, and punctuation using AI.",
+    "category": "grammar",
+    "before_query": "SELECT h.name AS hotel_name,\n       r.content AS original_review\nFROM `travel-sample`.inventory.hotel AS h\nUNNEST h.reviews AS r\nWHERE r.content IS NOT NULL\nLIMIT 3",
+    "after_query": "SELECT h.name AS hotel_name,\n       r.content AS original_review,\n       default:ai_corrected_grammar({\"text\": r.content, \"temperature\": 0.2, \"max_tokens\": 3000}) AS corrected_review\nFROM `travel-sample`.inventory.hotel AS h\nUNNEST h.reviews AS r\nWHERE r.content IS NOT NULL\nLIMIT 3",
+    "ai_fields": ["corrected_review"],
+    "display_hint": "cards"
+  },
+  {
+    "id": "generation-hotels",
+    "name": "Hotel Promo Tagline",
+    "description": "Generate a one-sentence promotional tagline for hotels using AI, based on the hotel name and city.",
+    "category": "generation",
+    "before_query": "SELECT name,\n       city,\n       free_breakfast,\n       free_internet,\n       free_parking\nFROM `travel-sample`.inventory.hotel\nWHERE vacancy = true\nLIMIT 5",
+    "after_query": "SELECT name,\n       city,\n       free_breakfast,\n       free_internet,\n       free_parking,\n       default:ai_generated_text({\"prompt\": \"Write a one-sentence promotional tagline for a hotel called \" || name || \" in \" || city, \"temperature\": 0.8, \"max_tokens\": 200}) AS promo_tagline\nFROM `travel-sample`.inventory.hotel\nWHERE vacancy = true\nLIMIT 5",
+    "ai_fields": ["promo_tagline"],
+    "display_hint": "table"
+  },
+  {
+    "id": "masking-landmarks",
+    "name": "Landmark PII Masking",
+    "description": "Redact sensitive information like person names, locations, emails, and phone numbers from landmark descriptions.",
+    "category": "masking",
+    "before_query": "SELECT name,\n       content AS original_text\nFROM `travel-sample`.inventory.landmark\nWHERE content IS NOT NULL\nLIMIT 3",
+    "after_query": "SELECT name,\n       content AS original_text,\n       default:ai_masked({\"text\": content, \"labels\": [\"person\", \"location\", \"email\", \"phone\"], \"temperature\": 0.2, \"max_tokens\": 3000}) AS masked_text\nFROM `travel-sample`.inventory.landmark\nWHERE content IS NOT NULL\nLIMIT 3",
+    "ai_fields": ["masked_text"],
+    "display_hint": "cards"
+  },
+  {
+    "id": "similarity-reviews",
+    "name": "Review Similarity Scoring",
+    "description": "Compare pairs of hotel reviews and score their similarity from 0 to 1 using AI.",
+    "category": "similarity",
+    "before_query": "SELECT h.name AS hotel_name,\n       r1.content AS review_1,\n       r2.content AS review_2\nFROM `travel-sample`.inventory.hotel AS h\nUNNEST h.reviews AS r1\nUNNEST h.reviews AS r2\nWHERE r1.author != r2.author\nLIMIT 3",
+    "after_query": "SELECT h.name AS hotel_name,\n       r1.content AS review_1,\n       r2.content AS review_2,\n       default:ai_similarity({\"text1\": r1.content, \"text2\": r2.content, \"temperature\": 0.0, \"max_tokens\": 500}) AS similarity_score\nFROM `travel-sample`.inventory.hotel AS h\nUNNEST h.reviews AS r1\nUNNEST h.reviews AS r2\nWHERE r1.author != r2.author\nLIMIT 3",
+    "ai_fields": ["similarity_score"],
+    "display_hint": "table"
+  },
+  {
+    "id": "translation-hotels",
+    "name": "Hotel Description Translation",
+    "description": "Translate English hotel descriptions into Spanish using AI, enabling multilingual content delivery.",
+    "category": "translation",
+    "before_query": "SELECT name,\n       description AS english_description\nFROM `travel-sample`.inventory.hotel\nWHERE description IS NOT NULL\nLIMIT 2",
+    "after_query": "SELECT name,\n       description AS english_description,\n       default:ai_translation({\"text\": description, \"to_language\": \"es\", \"temperature\": 0.3, \"max_tokens\": 2000}) AS spanish_description\nFROM `travel-sample`.inventory.hotel\nWHERE description IS NOT NULL\nLIMIT 2",
+    "ai_fields": ["spanish_description"],
+    "display_hint": "cards"
+  },
+  {
+    "id": "completion-hotels",
+    "name": "AI Concierge Recommendation",
+    "description": "Generate personalized travel recommendations for hotels using a custom AI concierge prompt.",
+    "category": "completion",
+    "before_query": "SELECT name,\n       city,\n       country\nFROM `travel-sample`.inventory.hotel\nLIMIT 5",
+    "after_query": "SELECT name,\n       city,\n       country,\n       default:ai_completion({\"system_prompt\": \"You are a travel concierge. Write a brief, enthusiastic 2-sentence recommendation for why a traveler should stay at this hotel.\", \"user_prompt\": \"Hotel: \" || name || \", City: \" || city || \", Country: \" || country, \"temperature\": 0.7, \"max_tokens\": 300}) AS concierge_recommendation\nFROM `travel-sample`.inventory.hotel\nLIMIT 5",
+    "ai_fields": ["concierge_recommendation"],
+    "display_hint": "cards"
+  },
+  {
+    "id": "combo-intelligence",
+    "name": "Full Intelligence Stack",
+    "description": "Apply sentiment analysis, summarization, and entity extraction to hotel reviews in a single query \u2014 showing AI Functions compose naturally in SQL++.",
+    "category": "sentiment",
+    "before_query": "SELECT h.name AS hotel_name,\n       r.content AS raw_review\nFROM `travel-sample`.inventory.hotel AS h\nUNNEST h.reviews AS r\nWHERE h.city = \"London\"\nLIMIT 2",
+    "after_query": "SELECT h.name AS hotel_name,\n       r.content AS raw_review,\n       default:ai_sentiment({\"text\": r.content, \"temperature\": 0.3}) AS sentiment,\n       default:ai_summary({\"text\": r.content, \"max_words\": 20, \"temperature\": 0.4}) AS summary,\n       default:ai_extraction({\"text\": r.content, \"labels\": [\"person\", \"location\"], \"temperature\": 0.2}) AS entities\nFROM `travel-sample`.inventory.hotel AS h\nUNNEST h.reviews AS r\nWHERE h.city = \"London\"\nLIMIT 2",
+    "ai_fields": ["sentiment", "summary", "entities"],
+    "display_hint": "cards"
+  },
+  {
+    "id": "hero-query",
+    "name": "What If Your Database Could Think?",
+    "description": "The hero query: summarize, score sentiment, generate a tagline, and translate \u2014 all in one SQL++ statement. This is the opening demo moment.",
+    "category": "summary",
+    "before_query": "SELECT h.name AS hotel_name,\n       h.city,\n       h.country,\n       h.description,\n       r.content AS review\nFROM `travel-sample`.inventory.hotel AS h\nUNNEST h.reviews AS r\nWHERE h.city = \"Paris\"\nLIMIT 1",
+    "after_query": "SELECT h.name AS hotel_name,\n       h.city,\n       h.country,\n       default:ai_summary({\"text\": h.description, \"max_words\": 25, \"temperature\": 0.4}) AS summary,\n       default:ai_sentiment({\"text\": r.content, \"temperature\": 0.3}) AS review_sentiment,\n       default:ai_generated_text({\"prompt\": \"Write a 10-word tagline for \" || h.name || \" in \" || h.city, \"temperature\": 0.8, \"max_tokens\": 100}) AS tagline,\n       default:ai_translation({\"text\": h.description, \"to_language\": \"fr\", \"temperature\": 0.3, \"max_tokens\": 1000}) AS french_description\nFROM `travel-sample`.inventory.hotel AS h\nUNNEST h.reviews AS r\nWHERE h.city = \"Paris\"\nLIMIT 1",
+    "ai_fields": ["summary", "review_sentiment", "tagline", "french_description"],
+    "display_hint": "cards"
   }
 ]
